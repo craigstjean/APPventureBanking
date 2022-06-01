@@ -20,7 +20,8 @@ public class AccountController : ControllerBase
     public IActionResult Get()
     {
         Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
-        var identity = _context.Identities.Find(int.Parse(authorizationHeader[0].Split(" ")[1]));
+        var identity = authorizationHeader.Count == 0 ? null
+            : _context.Identities.Find(int.Parse(authorizationHeader[0].Split(" ")[1]));
         
         if (identity == null)
         {
@@ -34,7 +35,8 @@ public class AccountController : ControllerBase
     public IActionResult Get(int id)
     {
         Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
-        var identity = _context.Identities.Find(int.Parse(authorizationHeader[0].Split(" ")[1]));
+        var identity = authorizationHeader.Count == 0 ? null
+            : _context.Identities.Find(int.Parse(authorizationHeader[0].Split(" ")[1]));
         
         if (identity == null)
         {
@@ -59,7 +61,8 @@ public class AccountController : ControllerBase
     public IActionResult GetTransactions(int id)
     {
         Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
-        var identity = _context.Identities.Find(int.Parse(authorizationHeader[0].Split(" ")[1]));
+        var identity = authorizationHeader.Count == 0 ? null
+            : _context.Identities.Find(int.Parse(authorizationHeader[0].Split(" ")[1]));
         
         if (identity == null)
         {
@@ -78,7 +81,8 @@ public class AccountController : ControllerBase
     public IActionResult Post([FromBody] Account? account)
     {
         Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
-        var identity = _context.Identities.Find(int.Parse(authorizationHeader[0].Split(" ")[1]));
+        var identity = authorizationHeader.Count == 0 ? null
+            : _context.Identities.Find(int.Parse(authorizationHeader[0].Split(" ")[1]));
         
         if (identity == null)
         {
@@ -102,7 +106,8 @@ public class AccountController : ControllerBase
     public IActionResult Delete(int id)
     {
         Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
-        var identity = _context.Identities.Find(int.Parse(authorizationHeader[0].Split(" ")[1]));
+        var identity = authorizationHeader.Count == 0 ? null
+            : _context.Identities.Find(int.Parse(authorizationHeader[0].Split(" ")[1]));
         
         if (identity == null)
         {
