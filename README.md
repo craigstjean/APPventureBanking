@@ -10,6 +10,7 @@ OutSystems is a low-code general purpose development platform.
 
 ## How do I use it?
 
+    dotnet tool install --global dotnet-ef
     dotnet ef database update
     dotnet run
 
