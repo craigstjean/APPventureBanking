@@ -8,8 +8,7 @@ public class Bill
     public BillingPayee BillingPayee { get; set; }
     
     public DateOnly DueDate { get; set; }
-    public int DollarsDue { get; set; }
-    public int CentsDue { get; set; }
+    public decimal AmountDue { get; set; }
 
     public int IdentityId { get; set; }
     public Identity Identity { get; set; }

@@ -1,4 +1,6 @@
+using APPventureBanking.Controllers.TransferObjects;
 using APPventureBanking.Models;
+using APPventureBanking.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APPventureBanking.Controllers;
@@ -9,11 +11,13 @@ public class AccountController : ControllerBase
 {
     private readonly ILogger<AccountController> _logger;
     private readonly BankContext _context;
+    private readonly AccountService _accountService;
 
-    public AccountController(ILogger<AccountController> logger, BankContext context)
+    public AccountController(ILogger<AccountController> logger, BankContext context, AccountService accountService)
     {
         _logger = logger;
         _context = context;
+        _accountService = accountService;
     }
     
     [HttpGet]
@@ -27,8 +31,18 @@ public class AccountController : ControllerBase
         {
             return Unauthorized();
         }
-        
-        return Ok(_context.Accounts.Where(a => a != null && !a.IsDeleted && a.Identities.Contains(identity)));
+
+        var accounts = _context.Accounts.Where(a => !a.IsDeleted && a.Identities.Contains(identity));
+        var results = accounts.Select(a => new AccountBalanceDTO
+        {
+            AccountId = a.AccountId,
+            AccountNumber = a.AccountNumber,
+            AccountType = a.AccountType,
+            Name = a.Name,
+            Balance = _accountService.GetBalance(a.AccountId)
+        });
+
+        return Ok(results);
     }
     
     [HttpGet("{id}")]
@@ -54,7 +68,16 @@ public class AccountController : ControllerBase
             return Unauthorized();
         }
         
-        return Ok(account);
+        var result = new AccountBalanceDTO
+        {
+            AccountId = account.AccountId,
+            AccountNumber = account.AccountNumber,
+            AccountType = account.AccountType,
+            Name = account.Name,
+            Balance = _accountService.GetBalance(account.AccountId)
+        };
+        
+        return Ok(result);
     }
     
     [HttpGet("{id}/transactions")]
@@ -96,6 +119,7 @@ public class AccountController : ControllerBase
         
         account.Identities.Clear();
         account.Identities.Add(identity);
+        account.AccountNumber = _accountService.NextAccountNumber();
         _context.Accounts.Add(account);
         _context.SaveChanges();
         

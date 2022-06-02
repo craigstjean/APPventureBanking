@@ -28,7 +28,7 @@ public class BillController : ControllerBase
             return Unauthorized();
         }
         
-        return Ok(_context.Bills.Where(b => b != null && b.IdentityId == identity.IdentityId).ToList());
+        return Ok(_context.Bills.Where(b => b.IdentityId == identity.IdentityId).ToList());
     }
     
     [HttpGet("{id}")]

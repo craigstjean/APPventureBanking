@@ -1,10 +1,12 @@
 using APPventureBanking.Filters;
 using APPventureBanking.Models;
+using APPventureBanking.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<BankContext>();
+builder.Services.AddTransient<AccountService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -6,14 +6,14 @@ namespace APPventureBanking.Models;
 
 public class BankContext : DbContext
 {
-    public DbSet<Account?> Accounts { get; set; }
+    public DbSet<Account> Accounts { get; set; }
     public DbSet<Address> Addresses { get; set; }
-    public DbSet<Bill?> Bills { get; set; }
+    public DbSet<Bill> Bills { get; set; }
     public DbSet<BillingPayee> BillingPayees { get; set; }
     public DbSet<Card> Cards { get; set; }
     public DbSet<Identity> Identities { get; set; }
     public DbSet<Party> Parties { get; set; }
-    public DbSet<Transaction?> Transactions { get; set; }
+    public DbSet<Transaction> Transactions { get; set; }
 
     public string DbPath { get; }
 
@@ -44,13 +44,6 @@ public class BankContext : DbContext
             .HasConversion(
                 v => v.ToString(),
                 v => (AccountType) Enum.Parse(typeof(AccountType), v));
-        
-        modelBuilder
-            .Entity<Transaction>()
-            .Property(e => e.TransactionType)
-            .HasConversion(
-                v => v.ToString(),
-                v => (TransactionType) Enum.Parse(typeof(TransactionType), v));
         
         modelBuilder
             .Entity<Card>()
