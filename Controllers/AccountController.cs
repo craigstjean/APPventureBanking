@@ -124,6 +124,33 @@ public class AccountController : ControllerBase
         account.AccountNumber = _accountService.NextAccountNumber();
         _context.Accounts.Add(account);
         _context.SaveChanges();
+
+        Card? card;
+        switch (account.AccountType)
+        {
+            case AccountType.Checking:
+                card = new Card
+                {
+                    CardType = CardType.DebitCard,
+                    AccountId = account.AccountId,
+                    ExpirationDate = DateOnly.FromDateTime(DateTime.Now.AddYears(1))
+                };
+
+                _context.Cards.Add(card);
+                _context.SaveChanges();
+                break;
+            case AccountType.Card:
+                card = new Card
+                {
+                    CardType = CardType.CreditCard,
+                    AccountId = account.AccountId,
+                    ExpirationDate = DateOnly.FromDateTime(DateTime.Now.AddYears(1))
+                };
+
+                _context.Cards.Add(card);
+                _context.SaveChanges();
+                break;
+        }
         
         return CreatedAtAction("Get", new { id = account.AccountId }, account);
     }
