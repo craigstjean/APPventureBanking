@@ -8,6 +8,7 @@ namespace APPventureBanking.Controllers;
 public class AccountTypeController : ControllerBase
 {
     [HttpGet]
+    [ProducesResponseType(typeof(List<string>), 200)]
     public IActionResult Get()
     {
         return Ok(Enum.GetNames(typeof(AccountType)));
