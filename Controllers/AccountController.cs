@@ -21,6 +21,7 @@ public class AccountController : ControllerBase
     }
     
     [HttpGet]
+    [ProducesResponseType(typeof(List<AccountBalanceDTO>), 200)]
     public IActionResult Get()
     {
         Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
@@ -46,6 +47,7 @@ public class AccountController : ControllerBase
     }
     
     [HttpGet("{id}")]
+    [ProducesResponseType(typeof(AccountBalanceDTO), 200)]
     public IActionResult Get(int id)
     {
         Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
