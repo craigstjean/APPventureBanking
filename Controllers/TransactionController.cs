@@ -1,3 +1,4 @@
+using APPventureBanking.Controllers.TransferObjects;
 using APPventureBanking.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,16 +18,24 @@ public class TransactionController : ControllerBase
     }
     
     [HttpPost]
-    public IActionResult Post([FromBody] Transaction? transaction)
+    public IActionResult Post([FromBody] CreateTransactionRequest? request)
     {
-        if (transaction == null)
+        if (request == null)
         {
             return BadRequest();
         }
+        
+        var transaction = new Transaction
+        {
+            Amount = request.Amount,
+            FromAccountId = request.FromAccountId,
+            ToAccountId = request.ToAccountId,
+            TransactionDateTime = DateTime.Now
+        };
 
         _context.Transactions.Add(transaction);
         _context.SaveChanges();
 
-        return CreatedAtRoute("Get", new { id = transaction.TransactionId }, transaction);
+        return CreatedAtRoute("Get", new { id = transaction.TransactionId }, request);
     }
 }

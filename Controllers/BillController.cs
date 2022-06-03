@@ -1,3 +1,4 @@
+using APPventureBanking.Controllers.TransferObjects;
 using APPventureBanking.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +18,7 @@ public class BillController : ControllerBase
     }
     
     [HttpGet]
+    [ProducesResponseType(typeof(List<BillResponse>), 200)]
     public IActionResult Get()
     {
         Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
@@ -27,11 +29,22 @@ public class BillController : ControllerBase
         {
             return Unauthorized();
         }
+
+        var bills = _context.Bills.Where(b => b.IdentityId == identity.IdentityId).ToList();
+        var responses = bills.Select(b => new BillResponse
+        {
+            BillId = b.BillId,
+            BillingPayeeId = b.BillingPayeeId,
+            BillingPayee = b.BillingPayee,
+            DueDate = b.DueDate,
+            AmountDue = b.AmountDue
+        });
         
-        return Ok(_context.Bills.Where(b => b.IdentityId == identity.IdentityId).ToList());
+        return Ok(responses);
     }
     
     [HttpGet("{id}")]
+    [ProducesResponseType(typeof(BillResponse), 200)]
     public IActionResult Get(int id)
     {
         Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
@@ -54,35 +67,15 @@ public class BillController : ControllerBase
             return Unauthorized();
         }
         
-        return Ok(bill);
-    }
-    
-    [HttpPut("{id}")]
-    public IActionResult Put(int id, [FromBody] Bill bill)
-    {
-        Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
-        var identity = authorizationHeader.Count == 0 ? null
-            : _context.Identities.Find(int.Parse(authorizationHeader[0].Split(" ")[1]));
-        
-        if (identity == null)
+        var response = new BillResponse
         {
-            return Unauthorized();
-        }
+            BillId = bill.BillId,
+            BillingPayeeId = bill.BillingPayeeId,
+            BillingPayee = bill.BillingPayee,
+            DueDate = bill.DueDate,
+            AmountDue = bill.AmountDue
+        };
         
-        var billToUpdate = _context.Bills.Find(id);
-        if (billToUpdate == null)
-        {
-            return NotFound();
-        }
-        
-        if (billToUpdate.IdentityId != identity.IdentityId)
-        {
-            return Unauthorized();
-        }
-        
-        billToUpdate.AssociatedTransactions = bill.AssociatedTransactions;
-        _context.SaveChanges();
-        
-        return NoContent();
+        return Ok(response);
     }
 }

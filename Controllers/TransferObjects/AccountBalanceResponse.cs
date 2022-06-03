@@ -2,7 +2,7 @@ using APPventureBanking.Models;
 
 namespace APPventureBanking.Controllers.TransferObjects;
 
-public class AccountBalanceDTO
+public class AccountBalanceResponse
 {
     public int AccountId { get; set; }
     public int AccountNumber { get; set; }

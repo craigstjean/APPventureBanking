@@ -21,7 +21,7 @@ public class AccountController : ControllerBase
     }
     
     [HttpGet]
-    [ProducesResponseType(typeof(List<AccountBalanceDTO>), 200)]
+    [ProducesResponseType(typeof(List<AccountBalanceResponse>), 200)]
     public IActionResult Get()
     {
         Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
@@ -34,7 +34,7 @@ public class AccountController : ControllerBase
         }
 
         var accounts = _context.Accounts.Where(a => !a.IsDeleted && a.Identities.Contains(identity));
-        var results = accounts.Select(a => new AccountBalanceDTO
+        var responses = accounts.Select(a => new AccountBalanceResponse
         {
             AccountId = a.AccountId,
             AccountNumber = a.AccountNumber,
@@ -43,11 +43,11 @@ public class AccountController : ControllerBase
             Balance = _accountService.GetBalance(a.AccountId)
         });
 
-        return Ok(results);
+        return Ok(responses);
     }
     
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(AccountBalanceDTO), 200)]
+    [ProducesResponseType(typeof(AccountBalanceResponse), 200)]
     public IActionResult Get(int id)
     {
         Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
@@ -70,7 +70,7 @@ public class AccountController : ControllerBase
             return Unauthorized();
         }
         
-        var result = new AccountBalanceDTO
+        var response = new AccountBalanceResponse
         {
             AccountId = account.AccountId,
             AccountNumber = account.AccountNumber,
@@ -79,7 +79,7 @@ public class AccountController : ControllerBase
             Balance = _accountService.GetBalance(account.AccountId)
         };
         
-        return Ok(result);
+        return Ok(response);
     }
     
     [HttpGet("{id}/transactions")]

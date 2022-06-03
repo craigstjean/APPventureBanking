@@ -15,5 +15,7 @@ public class Card
     public int AccountId { get; set; }
     public Account Account { get; set; }
 
+    public string CardNumber { get; set; }
     public DateOnly ExpirationDate { get; set; }
+    public string SecurityCode { get; set; }
 }

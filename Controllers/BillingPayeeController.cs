@@ -1,3 +1,4 @@
+using APPventureBanking.Controllers.TransferObjects;
 using APPventureBanking.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +18,7 @@ public class BillingPayeeController : ControllerBase
     }
     
     [HttpGet]
+    [ProducesResponseType(typeof(List<BillingPayeeResponse>), 200)]
     public IActionResult Get()
     {
         Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
@@ -32,11 +34,21 @@ public class BillingPayeeController : ControllerBase
             join account in _context.Accounts on billingPayee.ReferenceAccountId equals account.AccountId
             where account.Identities.Contains(identity)
             select billingPayee).ToList();
+
+        var responses = billingPayees.Select(b => new BillingPayeeResponse
+        {
+            BillingPayeeId = b.BillingPayeeId,
+            PartyId = b.PartyId,
+            Party = b.Party,
+            BillingAddressId = b.BillingAddressId,
+            BillingAddress = b.BillingAddress
+        });
         
-        return Ok(billingPayees);
+        return Ok(responses);
     }
     
     [HttpGet("{id}")]
+    [ProducesResponseType(typeof(BillingPayeeResponse), 200)]
     public IActionResult Get(int id)
     {
         Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
@@ -58,98 +70,16 @@ public class BillingPayeeController : ControllerBase
         {
             return Unauthorized();
         }
-        
-        return Ok(billingPayee);
-    }
-    
-    [HttpPost]
-    public IActionResult Post([FromBody] BillingPayee? billingPayee)
-    {
-        Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
-        var identity = authorizationHeader.Count == 0 ? null
-            : _context.Identities.Find(int.Parse(authorizationHeader[0].Split(" ")[1]));
-        
-        if (identity == null)
+
+        var response = new BillingPayeeResponse
         {
-            return Unauthorized();
-        }
+            BillingPayeeId = billingPayee.BillingPayeeId,
+            PartyId = billingPayee.PartyId,
+            Party = billingPayee.Party,
+            BillingAddressId = billingPayee.BillingAddressId,
+            BillingAddress = billingPayee.BillingAddress
+        };
         
-        if (billingPayee == null)
-        {
-            return BadRequest();
-        }
-        
-        if (!billingPayee.ReferenceAccount.Identities.Contains(identity))
-        {
-            return Unauthorized();
-        }
-        
-        _context.BillingPayees.Add(billingPayee);
-        _context.SaveChanges();
-        
-        return CreatedAtAction("Get", new { id = billingPayee.BillingPayeeId }, billingPayee);
-    }
-    
-    [HttpPut("{id}")]
-    public IActionResult Put(int id, [FromBody] BillingPayee? billingPayee)
-    {
-        Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
-        var identity = authorizationHeader.Count == 0 ? null
-            : _context.Identities.Find(int.Parse(authorizationHeader[0].Split(" ")[1]));
-        
-        if (identity == null)
-        {
-            return Unauthorized();
-        }
-        
-        if (billingPayee == null)
-        {
-            return BadRequest();
-        }
-        
-        if (!billingPayee.ReferenceAccount.Identities.Contains(identity))
-        {
-            return Unauthorized();
-        }
-        
-        var billingPayeeToUpdate = _context.BillingPayees.Find(id);
-        if (billingPayeeToUpdate == null)
-        {
-            return NotFound();
-        }
-        billingPayeeToUpdate.PartyId = billingPayee.PartyId;
-        billingPayeeToUpdate.ReferenceAccountId = billingPayee.ReferenceAccountId;
-        billingPayeeToUpdate.BillingAddressId = billingPayee.BillingAddressId;
-        _context.BillingPayees.Update(billingPayeeToUpdate);
-        _context.SaveChanges();
-        return NoContent();
-    }
-    
-    [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
-    {
-        Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
-        var identity = authorizationHeader.Count == 0 ? null
-            : _context.Identities.Find(int.Parse(authorizationHeader[0].Split(" ")[1]));
-        
-        if (identity == null)
-        {
-            return Unauthorized();
-        }
-        
-        var billingPayee = _context.BillingPayees.Find(id);
-        if (billingPayee == null)
-        {
-            return NotFound();
-        }
-        
-        if (!billingPayee.ReferenceAccount.Identities.Contains(identity))
-        {
-            return Unauthorized();
-        }
-        
-        _context.BillingPayees.Remove(billingPayee);
-        _context.SaveChanges();
-        return NoContent();
+        return Ok(response);
     }
 }

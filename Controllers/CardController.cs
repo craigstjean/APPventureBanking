@@ -1,3 +1,4 @@
+using APPventureBanking.Controllers.TransferObjects;
 using APPventureBanking.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +18,7 @@ public class CardController : ControllerBase
     }
     
     [HttpGet]
+    [ProducesResponseType(typeof(List<CardResponse>), 200)]
     public IActionResult Get()
     {
         Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
@@ -28,10 +30,20 @@ public class CardController : ControllerBase
             return Unauthorized();
         }
 
-        return Ok(_context.Cards.Where(c => c.Account.Identities.Contains(identity)));
+        var cards = _context.Cards.Where(c => c.Account.Identities.Contains(identity));
+        var responses = cards.Select(c => new CardResponse
+        {
+            CardId = c.CardId,
+            CardType = c.CardType,
+            AccountId = c.AccountId,
+            ExpirationDate = c.ExpirationDate
+        });
+        
+        return Ok(responses);
     }
     
     [HttpGet("{id}")]
+    [ProducesResponseType(typeof(CardResponse), 200)]
     public IActionResult Get(int id)
     {
         Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
@@ -53,7 +65,15 @@ public class CardController : ControllerBase
         {
             return Unauthorized();
         }
+
+        var response = new CardResponse
+        {
+            CardId = card.CardId,
+            CardType = card.CardType,
+            AccountId = card.AccountId,
+            ExpirationDate = card.ExpirationDate
+        };
         
-        return Ok(card);
+        return Ok(response);
     }
 }

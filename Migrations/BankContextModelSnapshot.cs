@@ -167,11 +167,19 @@ namespace APPventureBanking.Migrations
                     b.Property<int>("AccountId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("CardNumber")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("CardType")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateOnly>("ExpirationDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SecurityCode")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("CardId");
