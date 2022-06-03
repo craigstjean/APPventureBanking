@@ -18,6 +18,7 @@ public class TransactionController : ControllerBase
     }
     
     [HttpPost]
+    [ProducesResponseType(typeof(TransactionResponse), 200)]
     public IActionResult Post([FromBody] CreateTransactionRequest? request)
     {
         if (request == null)
@@ -36,6 +37,15 @@ public class TransactionController : ControllerBase
         _context.Transactions.Add(transaction);
         _context.SaveChanges();
 
-        return CreatedAtRoute("Get", new { id = transaction.TransactionId }, request);
+        var response = new TransactionResponse
+        {
+            TransactionId = transaction.TransactionId,
+            FromAccountId = transaction.FromAccountId,
+            ToAccountId = transaction.ToAccountId,
+            TransactionDateTime = transaction.TransactionDateTime,
+            Amount = transaction.Amount
+        };
+
+        return CreatedAtRoute("Get", new { id = transaction.TransactionId }, response);
     }
 }

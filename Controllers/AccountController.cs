@@ -12,12 +12,14 @@ public class AccountController : ControllerBase
     private readonly ILogger<AccountController> _logger;
     private readonly BankContext _context;
     private readonly AccountService _accountService;
+    private readonly CardService _cardService;
 
-    public AccountController(ILogger<AccountController> logger, BankContext context, AccountService accountService)
+    public AccountController(ILogger<AccountController> logger, BankContext context, AccountService accountService, CardService cardService)
     {
         _logger = logger;
         _context = context;
         _accountService = accountService;
+        _cardService = cardService;
     }
     
     [HttpGet]
@@ -103,6 +105,7 @@ public class AccountController : ControllerBase
     }
     
     [HttpPost]
+    [ProducesResponseType(typeof(AccountBalanceResponse), 200)]
     public IActionResult Post([FromBody] CreateAccountRequest? request)
     {
         Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
@@ -139,7 +142,9 @@ public class AccountController : ControllerBase
                 {
                     CardType = CardType.DebitCard,
                     AccountId = account.AccountId,
-                    ExpirationDate = DateOnly.FromDateTime(DateTime.Now.AddYears(1))
+                    ExpirationDate = DateOnly.FromDateTime(DateTime.Now.AddYears(1)),
+                    CardNumber = _cardService.NewCardNumber(),
+                    SecurityCode = _cardService.NewSecurityCode()
                 };
 
                 _context.Cards.Add(card);
@@ -150,7 +155,9 @@ public class AccountController : ControllerBase
                 {
                     CardType = CardType.CreditCard,
                     AccountId = account.AccountId,
-                    ExpirationDate = DateOnly.FromDateTime(DateTime.Now.AddYears(1))
+                    ExpirationDate = DateOnly.FromDateTime(DateTime.Now.AddYears(1)),
+                    CardNumber = _cardService.NewCardNumber(),
+                    SecurityCode = _cardService.NewSecurityCode()
                 };
 
                 _context.Cards.Add(card);
@@ -158,7 +165,16 @@ public class AccountController : ControllerBase
                 break;
         }
         
-        return CreatedAtAction("Get", new { id = account.AccountId }, account);
+        var response = new AccountBalanceResponse()
+        {
+            AccountId = account.AccountId,
+            AccountNumber = account.AccountNumber,
+            AccountType = account.AccountType,
+            Name = account.Name,
+            Balance = 0
+        };
+        
+        return CreatedAtAction("Get", new { id = account.AccountId }, response);
     }
     
     [HttpDelete("{id}")]
