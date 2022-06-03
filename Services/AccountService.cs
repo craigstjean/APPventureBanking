@@ -21,8 +21,11 @@ public class AccountService
     
     public decimal GetBalance(int accountId)
     {
-        return (from t in _context.Transactions
+        // Temporary hack since SQLite doesn't support Sum on a decimal
+        // Should have Sum as part of the query
+        var amounts = (from t in _context.Transactions
                       where t.ToAccountId == accountId || t.FromAccountId == accountId
-                      select t.ToAccountId == accountId ? t.Amount : -t.Amount).DefaultIfEmpty().Sum();
+                      select t.ToAccountId == accountId ? t.Amount : -t.Amount).ToList();
+        return amounts.Sum();
     }
 }
