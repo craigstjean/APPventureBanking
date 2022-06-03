@@ -13,5 +13,5 @@ public class Bill
     public int IdentityId { get; set; }
     public Identity Identity { get; set; }
 
-    public List<Transaction> AssociatedTransactions { get; set; }
+    public List<Transaction> AssociatedTransactions { get; set; } = new List<Transaction>();
 }
