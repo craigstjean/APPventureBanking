@@ -103,7 +103,7 @@ public class AccountController : ControllerBase
     }
     
     [HttpPost]
-    public IActionResult Post([FromBody] Account? account)
+    public IActionResult Post([FromBody] CreateAccountRequest? request)
     {
         Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
         var identity = authorizationHeader.Count == 0 ? null
@@ -114,14 +114,20 @@ public class AccountController : ControllerBase
             return Unauthorized();
         }
         
-        if (account == null)
+        if (request == null)
         {
             return BadRequest();
         }
-        
-        account.Identities.Clear();
+
+        var account = new Account
+        {
+            AccountType = request.AccountType,
+            Name = request.Name
+        };
+            
         account.Identities.Add(identity);
         account.AccountNumber = _accountService.NextAccountNumber();
+        account.IsDeleted = false;
         _context.Accounts.Add(account);
         _context.SaveChanges();
 
