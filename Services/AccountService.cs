@@ -23,6 +23,6 @@ public class AccountService
     {
         return (from t in _context.Transactions
                       where t.ToAccountId == accountId || t.FromAccountId == accountId
-                      select t.ToAccountId == accountId ? t.Amount : -t.Amount).Sum();
+                      select t.ToAccountId == accountId ? t.Amount : -t.Amount).DefaultIfEmpty().Sum();
     }
 }
