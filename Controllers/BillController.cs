@@ -35,7 +35,14 @@ public class BillController : ControllerBase
         {
             BillId = b.BillId,
             BillingPayeeId = b.BillingPayeeId,
-            BillingPayee = b.BillingPayee,
+            BillingPayee = new BillingPayeeResponse
+            {
+                BillingPayeeId = b.BillingPayee.BillingPayeeId,
+                PartyId = b.BillingPayee.PartyId,
+                Party = b.BillingPayee.Party,
+                BillingAddressId = b.BillingPayee.BillingAddressId,
+                BillingAddress = b.BillingPayee.BillingAddress
+            },
             DueDate = b.DueDate,
             AmountDue = b.AmountDue
         });
@@ -71,7 +78,14 @@ public class BillController : ControllerBase
         {
             BillId = bill.BillId,
             BillingPayeeId = bill.BillingPayeeId,
-            BillingPayee = bill.BillingPayee,
+            BillingPayee = new BillingPayeeResponse
+            {
+                BillingPayeeId = bill.BillingPayee.BillingPayeeId,
+                PartyId = bill.BillingPayee.PartyId,
+                Party = bill.BillingPayee.Party,
+                BillingAddressId = bill.BillingPayee.BillingAddressId,
+                BillingAddress = bill.BillingPayee.BillingAddress
+            },
             DueDate = bill.DueDate,
             AmountDue = bill.AmountDue
         };
