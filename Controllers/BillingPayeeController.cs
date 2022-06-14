@@ -60,15 +60,10 @@ public class BillingPayeeController : ControllerBase
             return Unauthorized();
         }
 
-        var billingPayee = _context.BillingPayees.Find(id);
+        var billingPayee = _context.BillingPayees.FirstOrDefault(b => b.BillingPayeeId == id && b.ReferenceAccount.Identities.Contains(identity));
         if (billingPayee == null)
         {
             return NotFound();
-        }
-        
-        if (!billingPayee.ReferenceAccount.Identities.Contains(identity))
-        {
-            return Unauthorized();
         }
 
         var response = new BillingPayeeResponse

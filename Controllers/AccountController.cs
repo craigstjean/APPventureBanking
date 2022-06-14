@@ -61,15 +61,10 @@ public class AccountController : ControllerBase
             return Unauthorized();
         }
         
-        var account = _context.Accounts.Find(id);
-        if (account == null || account.IsDeleted)
+        var account = _context.Accounts.FirstOrDefault(a => a.AccountId == id && !a.IsDeleted && a.Identities.Contains(identity));
+        if (account == null)
         {
             return NotFound();
-        }
-        
-        if (!account.Identities.Contains(identity))
-        {
-            return Unauthorized();
         }
         
         var response = new AccountBalanceResponse
@@ -189,17 +184,12 @@ public class AccountController : ControllerBase
             return Unauthorized();
         }
         
-        var accountToDelete = _context.Accounts.Find(id);
+        var accountToDelete = _context.Accounts.FirstOrDefault(a => a.AccountId == id && !a.IsDeleted && a.Identities.Contains(identity));
         if (accountToDelete == null)
         {
             return NotFound();
         }
 
-        if (!accountToDelete.Identities.Contains(identity))
-        {
-            return Unauthorized();
-        }
-        
         accountToDelete.IsDeleted = true;
         _context.SaveChanges();
         

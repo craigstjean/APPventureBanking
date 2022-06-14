@@ -55,17 +55,12 @@ public class CardController : ControllerBase
             return Unauthorized();
         }
         
-        var card = _context.Cards.Find(id);
+        var card = _context.Cards.FirstOrDefault(c => c.CardId == id && c.Account.Identities.Contains(identity));
         if (card == null)
         {
             return NotFound();
         }
         
-        if (!card.Account.Identities.Contains(identity))
-        {
-            return Unauthorized();
-        }
-
         var response = new CardResponse
         {
             CardId = card.CardId,
