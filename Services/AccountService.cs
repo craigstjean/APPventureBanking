@@ -28,4 +28,15 @@ public class AccountService
                       select t.ToAccountId == accountId ? t.Amount : -t.Amount).ToList();
         return amounts.Sum();
     }
+
+    public decimal GetBalanceAsOfTransaction(int accountId, int maxTransactionId)
+    {
+        // Temporary hack similar to GetBalance
+        // Not an ideal method to re-calculate per transaction constantly
+        var amounts = (from t in _context.Transactions
+                      where (t.ToAccountId == accountId || t.FromAccountId == accountId)
+                          && t.TransactionId <= maxTransactionId
+                      select t.ToAccountId == accountId ? t.Amount : -t.Amount).ToList();
+        return amounts.Sum();
+    }
 }

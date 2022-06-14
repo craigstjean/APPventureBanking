@@ -116,7 +116,7 @@ public class AccountController : ControllerBase
             ToAccountId = t.ToAccountId,
             TransactionDateTime = t.TransactionDateTime,
             Amount = t.Amount,
-            Balance = 0 //TODO
+            Balance = _accountService.GetBalanceAsOfTransaction(id, t.TransactionId)
         });
 
         var response = new TransactionsResponse

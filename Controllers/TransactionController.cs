@@ -1,5 +1,6 @@
 using APPventureBanking.Controllers.TransferObjects;
 using APPventureBanking.Models;
+using APPventureBanking.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APPventureBanking.Controllers;
@@ -10,11 +11,13 @@ public class TransactionController : ControllerBase
 {
     private readonly ILogger<TransactionController> _logger;
     private readonly BankContext _context;
+    private readonly AccountService _accountService;
 
-    public TransactionController(ILogger<TransactionController> logger, BankContext context)
+    public TransactionController(ILogger<TransactionController> logger, BankContext context, AccountService accountService)
     {
         _logger = logger;
         _context = context;
+        _accountService = accountService;
     }
     
     [HttpPost]
@@ -44,7 +47,7 @@ public class TransactionController : ControllerBase
             ToAccountId = transaction.ToAccountId,
             TransactionDateTime = transaction.TransactionDateTime,
             Amount = transaction.Amount,
-            Balance = 0 //TODO
+            Balance = _accountService.GetBalanceAsOfTransaction(request.FromAccountId, transaction.TransactionId)
         };
 
         return CreatedAtRoute("Get", new { id = transaction.TransactionId }, response);
