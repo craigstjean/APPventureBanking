@@ -80,6 +80,7 @@ public class AccountController : ControllerBase
     }
     
     [HttpGet("{id}/transactions")]
+    [ProducesResponseType(typeof(List<Transaction>), 200)]
     public IActionResult GetTransactions(int id)
     {
         Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
