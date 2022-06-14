@@ -80,8 +80,8 @@ public class AccountController : ControllerBase
     }
     
     [HttpGet("{id}/transactions")]
-    [ProducesResponseType(typeof(List<Transaction>), 200)]
-    public IActionResult GetTransactions(int id)
+    [ProducesResponseType(typeof(TransactionsResponse), 200)]
+    public IActionResult GetTransactions(int id, int maxRecords = 0, int pageNumber = 1)
     {
         Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
         var identity = authorizationHeader.Count == 0 ? null
@@ -91,13 +91,41 @@ public class AccountController : ControllerBase
         {
             return Unauthorized();
         }
-        
-        var transactions =
+
+        if (maxRecords == 0)
+        {
+            maxRecords = int.MaxValue;
+        }
+
+        var query =
             (from transaction in _context.Transactions
-            where (transaction.FromAccountId == id || transaction.ToAccountId == id)
-            select transaction).ToList();
+                where (transaction.FromAccountId == id || transaction.ToAccountId == id)
+                select transaction);
+
+        var totalTransactions = query.Count();
+        
+        var transactions = query
+            .Skip((pageNumber - 1) * maxRecords)
+            .Take(maxRecords)
+            .ToList();
+
+        var responses = transactions.Select(t => new TransactionResponse
+        {
+            TransactionId = t.TransactionId,
+            FromAccountId = t.FromAccountId,
+            ToAccountId = t.ToAccountId,
+            TransactionDateTime = t.TransactionDateTime,
+            Amount = t.Amount,
+            Balance = 0 //TODO
+        });
+
+        var response = new TransactionsResponse
+        {
+            Transactions = responses.ToList(),
+            TotalTransactions = totalTransactions
+        };
        
-        return Ok(transactions);
+        return Ok(response);
     }
     
     [HttpPost]

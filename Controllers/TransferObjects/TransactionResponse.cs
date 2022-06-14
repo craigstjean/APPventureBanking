@@ -10,4 +10,5 @@ public class TransactionResponse
     public DateTime TransactionDateTime { get; set; }
     
     public decimal Amount { get; set; }
+    public decimal Balance { get; set; }
 }

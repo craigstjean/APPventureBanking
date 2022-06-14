@@ -43,7 +43,8 @@ public class TransactionController : ControllerBase
             FromAccountId = transaction.FromAccountId,
             ToAccountId = transaction.ToAccountId,
             TransactionDateTime = transaction.TransactionDateTime,
-            Amount = transaction.Amount
+            Amount = transaction.Amount,
+            Balance = 0 //TODO
         };
 
         return CreatedAtRoute("Get", new { id = transaction.TransactionId }, response);
