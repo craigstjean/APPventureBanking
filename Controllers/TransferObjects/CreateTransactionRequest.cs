@@ -7,6 +7,7 @@ public class CreateTransactionRequest
     public string ToAccountName { get; set; }
 
     public decimal Amount { get; set; }
+    public string Description { get; set; }
 
     public bool IgnoreNameMismatch { get; set; }
 }

@@ -11,4 +11,5 @@ public class TransactionResponse
     
     public decimal Amount { get; set; }
     public decimal Balance { get; set; }
+    public string Description { get; set; }
 }

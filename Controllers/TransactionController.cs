@@ -66,7 +66,8 @@ public class TransactionController : ControllerBase
             Amount = request.Amount,
             FromAccountId = request.FromAccountId,
             ToAccountId = toAccount.AccountId,
-            TransactionDateTime = DateTime.Now
+            TransactionDateTime = DateTime.Now,
+            Description = request.Description
         };
 
         _context.Transactions.Add(transaction);
