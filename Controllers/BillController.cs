@@ -43,7 +43,7 @@ public class BillController : ControllerBase
                 BillingAddressId = b.BillingPayee.BillingAddressId,
                 BillingAddress = b.BillingPayee.BillingAddress
             },
-            DueDate = b.DueDate,
+            DueDate = b.DueDate.ToDateTime(TimeOnly.MaxValue),
             AmountDue = b.AmountDue
         });
         
@@ -86,7 +86,7 @@ public class BillController : ControllerBase
                 BillingAddressId = bill.BillingPayee.BillingAddressId,
                 BillingAddress = bill.BillingPayee.BillingAddress
             },
-            DueDate = bill.DueDate,
+            DueDate = bill.DueDate.ToDateTime(TimeOnly.MaxValue),
             AmountDue = bill.AmountDue
         };
         

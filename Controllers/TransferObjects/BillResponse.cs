@@ -9,6 +9,6 @@ public class BillResponse
     public int BillingPayeeId { get; set; }
     public BillingPayeeResponse BillingPayee { get; set; }
     
-    public DateOnly DueDate { get; set; }
+    public DateTime DueDate { get; set; }
     public decimal AmountDue { get; set; }
 }
