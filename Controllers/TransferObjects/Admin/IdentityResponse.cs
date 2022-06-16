@@ -10,5 +10,6 @@ public class IdentityResponse
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? EntityName { get; set; }
+    public string? DisplayName { get; set; }
     public string? PrimaryEmailAddress { get; set; }
 }

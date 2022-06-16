@@ -40,6 +40,7 @@ public class AdminIdentityController : ControllerBase
             FirstName = i.Party.FirstName,
             LastName = i.Party.LastName,
             EntityName = i.Party.EntityName,
+            DisplayName = i.Party.DisplayName,
             PrimaryEmailAddress = i.Party.PrimaryEmailAddress
         });
         
@@ -74,6 +75,7 @@ public class AdminIdentityController : ControllerBase
             FirstName = requestedIdentity.Party.FirstName,
             LastName = requestedIdentity.Party.LastName,
             EntityName = requestedIdentity.Party.EntityName,
+            DisplayName = requestedIdentity.Party.DisplayName,
             PrimaryEmailAddress = requestedIdentity.Party.PrimaryEmailAddress
         };
         
@@ -122,7 +124,13 @@ public class AdminIdentityController : ControllerBase
         var response = new IdentityResponse
         {
             IdentityId = newIdentity.IdentityId,
-            PartyId = newIdentity.PartyId
+            PartyId = newIdentity.PartyId,
+            Type = newIdentity.Party.Type,
+            FirstName = newIdentity.Party.FirstName,
+            LastName = newIdentity.Party.LastName,
+            EntityName = newIdentity.Party.EntityName,
+            DisplayName = newIdentity.Party.DisplayName,
+            PrimaryEmailAddress = newIdentity.Party.PrimaryEmailAddress
         };
         
         return CreatedAtAction("Post", new { id = newIdentity.IdentityId }, response);
