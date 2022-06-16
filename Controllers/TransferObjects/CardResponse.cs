@@ -10,5 +10,5 @@ public class CardResponse
 
     public int AccountId { get; set; }
 
-    public DateOnly ExpirationDate { get; set; }
+    public DateTime ExpirationDate { get; set; }
 }

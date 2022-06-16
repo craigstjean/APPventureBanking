@@ -36,7 +36,7 @@ public class CardController : ControllerBase
             CardId = c.CardId,
             CardType = c.CardType,
             AccountId = c.AccountId,
-            ExpirationDate = c.ExpirationDate
+            ExpirationDate = c.ExpirationDate.ToDateTime(TimeOnly.MaxValue)
         });
         
         return Ok(responses);
@@ -66,7 +66,7 @@ public class CardController : ControllerBase
             CardId = card.CardId,
             CardType = card.CardType,
             AccountId = card.AccountId,
-            ExpirationDate = card.ExpirationDate
+            ExpirationDate = card.ExpirationDate.ToDateTime(TimeOnly.MaxValue)
         };
         
         return Ok(response);
