@@ -1,6 +1,7 @@
 using APPventureBanking.Controllers.TransferObjects;
 using APPventureBanking.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace APPventureBanking.Controllers;
 
@@ -30,7 +31,11 @@ public class BillController : ControllerBase
             return Unauthorized();
         }
 
-        var bills = _context.Bills.Where(b => b.IdentityId == identity.IdentityId).ToList();
+        var bills = _context.Bills
+            .Include(b => b.BillingPayee)
+            .Include(b => b.BillingPayee.Party)
+            .Include(b => b.BillingPayee.BillingAddress)
+            .Where(b => b.IdentityId == identity.IdentityId).ToList();
         var responses = bills.Select(b => new BillResponse
         {
             BillId = b.BillId,
