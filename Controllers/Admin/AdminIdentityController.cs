@@ -20,7 +20,7 @@ public class AdminIdentityController : ControllerBase
     
     [HttpGet]
     [ProducesResponseType(typeof(List<IdentityResponse>), 200)]
-    public IActionResult Get()
+    public IActionResult Get(int accountId = 0)
     {
         Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
         var identity = authorizationHeader.Count == 0 ? null : authorizationHeader[0].Split(" ")[1];
@@ -29,12 +29,37 @@ public class AdminIdentityController : ControllerBase
         {
             return Unauthorized();
         }
+
+        Account? account = null;
+        IEnumerable<Identity> identities;
+        if (accountId != 0)
+        {
+            account = _context.Accounts.Find(accountId);
+            
+            if (account == null)
+            {
+                return NotFound();
+            }
+        }
         
-        var responses = _context.Identities
-            .Include(i => i.Party)
-            .ToList()
-            .OrderBy(i => i.Party.DisplayName)
-            .Select(i => new IdentityResponse
+        if (account != null)
+        {
+            identities = _context.Identities
+                .Include(i => i.Party)
+                .Include(i => i.Accounts)
+                .Where(i => i.Accounts.Contains(account))
+                .ToList()
+                .OrderBy(i => i.Party.DisplayName);
+        }
+        else
+        {
+            identities = _context.Identities
+                .Include(i => i.Party)
+                .ToList()
+                .OrderBy(i => i.Party.DisplayName);
+        }
+        
+        var responses = identities.Select(i => new IdentityResponse
         {
             IdentityId = i.IdentityId,
             PartyId = i.PartyId,
@@ -51,7 +76,7 @@ public class AdminIdentityController : ControllerBase
     
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(IdentityResponse), 200)]
-    public IActionResult Get(int id)
+    public IActionResult GetById(int id)
     {
         Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
         var identity = authorizationHeader.Count == 0 ? null : authorizationHeader[0].Split(" ")[1];
