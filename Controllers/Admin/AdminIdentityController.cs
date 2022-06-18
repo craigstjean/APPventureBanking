@@ -32,6 +32,7 @@ public class AdminIdentityController : ControllerBase
         
         var responses = _context.Identities
             .Include(i => i.Party)
+            .ToList()
             .OrderBy(i => i.Party.DisplayName)
             .Select(i => new IdentityResponse
         {
