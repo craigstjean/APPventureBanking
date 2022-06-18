@@ -40,7 +40,9 @@ public class BillController : ControllerBase
             .Include(b => b.BillingPayee)
             .Include(b => b.BillingPayee.Party)
             .Include(b => b.BillingPayee.BillingAddress)
-            .Where(b => b.IdentityId == identity.IdentityId).ToList();
+            .Where(b => b.IdentityId == identity.IdentityId)
+            .OrderByDescending(b => b.DueDate)
+            .ToList();
         var responses = bills.Select(b => new BillResponse
         {
             BillId = b.BillId,
@@ -190,7 +192,9 @@ public class BillController : ControllerBase
             return Unauthorized();
         }
 
-        var responses = bill.AssociatedTransactions.Select(t => new TransactionResponse
+        var responses = bill.AssociatedTransactions
+            .OrderByDescending(t => t.TransactionDateTime)
+            .Select(t => new TransactionResponse
         {
             TransactionId = t.TransactionId,
             FromAccountId = t.FromAccountId,

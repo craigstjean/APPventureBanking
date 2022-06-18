@@ -35,7 +35,10 @@ public class AccountController : ControllerBase
             return Unauthorized();
         }
 
-        var accounts = _context.Accounts.Where(a => !a.IsDeleted && a.Identities.Contains(identity));
+        var accounts = _context.Accounts
+            .Where(a => !a.IsDeleted && a.Identities.Contains(identity))
+            .OrderBy(a => a.AccountType.ToString())
+            .ThenBy(a => a.Name);
         var responses = accounts.Select(a => new AccountBalanceResponse
         {
             AccountId = a.AccountId,
@@ -100,6 +103,7 @@ public class AccountController : ControllerBase
         var query =
             (from transaction in _context.Transactions
                 where (transaction.FromAccountId == id || transaction.ToAccountId == id)
+                orderby transaction.TransactionId descending
                 select transaction);
 
         var totalTransactions = query.Count();

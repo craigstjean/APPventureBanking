@@ -36,7 +36,9 @@ public class AdminBillingPayeeController : ControllerBase
         
         var responses = _context.BillingPayees
             .Include(bp => bp.Party)
-            .Include(bp => bp.BillingAddress).Select(bp => new BillingPayeeResponse 
+            .Include(bp => bp.BillingAddress)
+            .OrderBy(bp => bp.Party.DisplayName)
+            .Select(bp => new BillingPayeeResponse 
         {
             BillingPayeeId = bp.BillingPayeeId,
             PartyId = bp.PartyId,

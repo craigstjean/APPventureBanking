@@ -33,6 +33,7 @@ public class BillingPayeeController : ControllerBase
         var billingPayees = (from billingPayee in _context.BillingPayees
             join account in _context.Accounts on billingPayee.ReferenceAccountId equals account.AccountId
             where account.Identities.Contains(identity)
+            orderby billingPayee.Party.DisplayName
             select billingPayee).ToList();
 
         var responses = billingPayees.Select(b => new BillingPayeeResponse
