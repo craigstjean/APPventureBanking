@@ -24,6 +24,15 @@ public class TransactionController : ControllerBase
     [ProducesResponseType(typeof(CreateTransactionResponse), 200)]
     public IActionResult Post([FromBody] CreateTransactionRequest? request)
     {
+        Request.Headers.TryGetValue("Authorization", out var authorizationHeader);
+        var identity = authorizationHeader.Count == 0 ? null
+            : _context.Identities.Find(int.Parse(authorizationHeader[0].Split(" ")[1]));
+        
+        if (identity == null)
+        {
+            return Unauthorized();
+        }
+        
         if (request == null)
         {
             return BadRequest();
@@ -35,6 +44,17 @@ public class TransactionController : ControllerBase
             {
                 Success = false
             });
+        }
+        
+        var fromAccount =
+            _context.Accounts.FirstOrDefault(a => a.AccountId == request.FromAccountId && !a.IsDeleted);
+        var identityAccount = (from i in _context.Identities
+                where i.IdentityId == identity.IdentityId
+                    && i.Accounts.Contains(fromAccount)
+                select i).FirstOrDefault();
+        if (identityAccount == null)
+        {
+            return Unauthorized();
         }
 
         var toAccount =

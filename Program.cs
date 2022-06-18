@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<BankContext>();
 builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<BillService>();
 builder.Services.AddScoped<CardService>();
 
 builder.Services.AddControllers()
