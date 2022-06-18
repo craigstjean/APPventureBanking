@@ -37,7 +37,7 @@ public class AccountController : ControllerBase
 
         var accounts = _context.Accounts
             .Where(a => !a.IsDeleted && a.Identities.Contains(identity))
-            .OrderBy(a => a.AccountType.ToString())
+            .OrderBy(a => a.AccountType)
             .ThenBy(a => a.Name);
         var responses = accounts.Select(a => new AccountBalanceResponse
         {
