@@ -18,4 +18,6 @@ OutSystems is a low-code general purpose development platform.
 
 - [APPventure Banking Recording]
 - [APPventure Banking Demo]
-
+- [APPventure Banking Core in OutSystems Forge](https://www.outsystems.com/forge/component-overview/13259/appventure-banking-core)
+- [APPventure Banking Web in OutSystems Forge](https://www.outsystems.com/forge/component-overview/13260/appventure-banking-web)
+- [APPventure Banking Mobile (Pre-build) in OutSystems Forge](https://www.outsystems.com/forge/component-overview/13261/appventure-banking-mobile-prebuild)
